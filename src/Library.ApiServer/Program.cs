@@ -10,6 +10,7 @@ using Library.ApiServer;
 using Library.ApiServer.Emails;
 using Library.ApiServer.Emails.Smtp;
 using MediatR;
+using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Persistance;
 using Persistance.Repositories;
@@ -40,6 +41,15 @@ namespace WebApplication1
             ConfigureMailing(builder);
             builder.Services.AddValidatorsFromAssemblyContaining(typeof(CreateBookCommandValidator));
             var app = builder.Build();
+
+            //migrate DB
+
+            using (var context = app.Services.GetRequiredService<LibraryContext>())
+            {
+                context.Database.Migrate();
+            }
+            Console.WriteLine("Done");
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -54,6 +64,8 @@ namespace WebApplication1
             app.MapControllers();
 
             app.Run();
+
+
         }
 
         private static void ConfigureMailing(WebApplicationBuilder builder)
@@ -93,11 +105,12 @@ namespace WebApplication1
 
         private static void ConfigureHangfire(WebApplicationBuilder builder)
         {
+            var hangfireConnection = builder.Configuration.GetConnectionString("HangfireConnection");
             builder.Services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UsePostgreSqlStorage(e => e.UseNpgsqlConnection(builder.Configuration.GetConnectionString("HangfireConnection"))));
+                .UsePostgreSqlStorage(e => e.UseNpgsqlConnection(hangfireConnection)));
             builder.Services.AddHangfireServer();
         }
     }

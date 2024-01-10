@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  postgres.database.library:
+    image: postgres:16.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: library
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_library:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d library'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  postgres.database.hangfire:
+    image: postgres:16.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: libraryHangfire
+    ports:
+      - "8000:5432"
+    volumes:
+      - postgres_data_hangfire:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d libraryHangfire'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  apiserver:
+    build:
+      context: ./src
+    ports:
+      - "80:80"
+      - "5156:5156"
+    depends_on:
+      postgres.database.hangfire:
+        condition: service_healthy
+      postgres.database.library:
+        condition: service_healthy
+
+volumes:
+  postgres_data_library:
+  postgres_data_hangfire:

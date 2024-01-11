@@ -4,8 +4,8 @@ namespace Contracts.Borrowing
 {
     public class CreateBorrowingCommand : ICommand<CreateBorrowingCommandResponse>
     {
-        public Book.Book Book { get; set; }
-        public User.User BorrowedBy { get; }
+        public int BookId { get; set; }
+        public Guid UserGuid { get; set; }
         public int BorrowedForDays { get; set; }
     }
 }

@@ -37,14 +37,12 @@ namespace Persistance.Repositories
         public async Task<BookEntity?> GetBookAsync(int bookId, CancellationToken cancellationToken = default)
         {
             return await _libraryContext.Books
-                .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == bookId, cancellationToken);
         }
 
         public async Task<List<BookEntity>> GetBooksAsync(int pageNumber = 0, int pageSize = 100, CancellationToken cancellationToken = default)
         {
             return await _libraryContext.Books
-                .AsNoTracking()
                 .OrderBy(e => e.Id)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)

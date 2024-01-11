@@ -75,13 +75,10 @@ namespace Persistance.Migrations
                     b.Property<int>("BorrowedForDays")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("Guid")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("Notified")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("ReturnedAt")
+                    b.Property<DateTime?>("ReturnedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -89,6 +86,8 @@ namespace Persistance.Migrations
                     b.HasIndex("BookId");
 
                     b.HasIndex("BorrowedById");
+
+                    b.HasIndex("Id");
 
                     b.ToTable("Borrowing", (string)null);
                 });

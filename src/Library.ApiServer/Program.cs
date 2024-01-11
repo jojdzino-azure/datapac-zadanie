@@ -12,6 +12,7 @@ using Library.ApiServer.Emails.Smtp;
 using MediatR;
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Writers;
 using Persistance;
 using Persistance.Repositories;
 
@@ -25,7 +26,9 @@ namespace WebApplication1
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(e=>
+            e.JsonSerializerOptions.DefaultIgnoreCondition= System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            );
             builder.Services.AddSwaggerGen();
             var connectionString = builder.Configuration.GetConnectionString("LibraryContext");
             builder.Services.AddDbContext<LibraryContext>(
@@ -34,6 +37,7 @@ namespace WebApplication1
                         .LogTo(Console.WriteLine, LogLevel.Information)
                         );
             builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+            
             ConfigureOptions(builder);
             ConfigureMediatR(builder);
             ConfigureRespositories(builder);
@@ -41,13 +45,11 @@ namespace WebApplication1
             ConfigureMailing(builder);
             builder.Services.AddValidatorsFromAssemblyContaining(typeof(CreateBookCommandValidator));
             var app = builder.Build();
-
             //migrate DB
-
-            using (var context = app.Services.GetRequiredService<LibraryContext>())
-            {
-                context.Database.Migrate();
-            }
+            using var scope = app.Services.CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<LibraryContext>();
+            context.Database.Migrate();
+            
             Console.WriteLine("Done");
 
             if (app.Environment.IsDevelopment())
@@ -90,7 +92,7 @@ namespace WebApplication1
         {
             builder.Services.AddScoped<IQueryBookRepository, BooksRepository>();
             builder.Services.AddScoped<IBookRepository, BooksRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IQueryUserRepository, UserRepository>();
             builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
         }
 

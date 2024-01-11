@@ -32,12 +32,12 @@ namespace Persistance.Repositories
         public async Task<BorrowingEntity?> ReturnBorrowing(int borrowingId, CancellationToken cancellationToken = default)
         {
             var borrowing = await _libraryContext.Borrowings
-                .FindAsync(borrowingId, cancellationToken);
+                .FindAsync(new object[] { borrowingId }, cancellationToken);
             if (borrowing == null)
             {
                 return null;
             }
-            borrowing.ReturnedAt = DateTime.Now;
+            borrowing.ReturnedAt = DateTime.UtcNow;
             await _libraryContext.SaveChangesAsync();
             return borrowing;
         }

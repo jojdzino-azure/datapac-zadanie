@@ -10,11 +10,11 @@ namespace Contracts.Validation.Borrowing
         {
             RuleFor(b => b.BorrowedForDays).LessThan(31)
                 .WithMessage("Maximum days for borrowing a book is 31.");
-            RuleFor(e => e.Book).MustAsync(async (book, token) =>
+            RuleFor(e => e.BookId).MustAsync(async (bookId, token) =>
             {
-                var foundBook = await bookRepository.GetBookAsync(book.Id, token);
+                var foundBook = await bookRepository.GetBookAsync(bookId, token);
                 return foundBook != null;
-            }).WithMessage(e => $"Book with id {e.Book.Id} does not exist.");
+            }).WithMessage(e => $"Book with id {e.BookId} does not exist.");
             //other data validations
         }
     }

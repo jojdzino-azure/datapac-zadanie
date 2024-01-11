@@ -1,10 +1,5 @@
-﻿# Requirements
-1. DBs (postgre)
-	- libraryHangfire (jobs)
-	- library
-
-2. Run command (from VS)
-	- update-database 
+﻿# How to run
+docker compose up --build
 
 # Description
 App provides CRUD operations over some entities and starts job that sends (well, just faking) emails to users based on their borrowed books. Cannot create users.

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 
 namespace Common.MediatR;
@@ -16,8 +17,13 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
             return await next();
         }
         var context = new ValidationContext<TRequest>(request);
-        var errorsDictionary = _validators
-            .Select(x => x.Validate(context))
+        var validationResults = new List<ValidationResult>();
+        foreach ( var validator in _validators )
+        {
+            var result = await validator.ValidateAsync(context);
+            validationResults.Add(result);
+        }
+        var errorsDictionary = validationResults
             .SelectMany(x => x.Errors)
             .Where(x => x != null)
             .GroupBy(

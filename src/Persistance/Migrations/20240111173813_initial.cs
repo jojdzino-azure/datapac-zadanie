@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Persistance.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,8 +16,8 @@ namespace Persistance.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Description = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
                     PublishedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     AuthorName = table.Column<string>(type: "text", nullable: false),
                     InternalComment = table.Column<string>(type: "text", nullable: true)
@@ -51,10 +51,9 @@ namespace Persistance.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Guid = table.Column<Guid>(type: "uuid", nullable: false),
                     BorrowedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     BorrowedForDays = table.Column<int>(type: "integer", nullable: false),
-                    ReturnedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ReturnedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Notified = table.Column<bool>(type: "boolean", nullable: false),
                     BookId = table.Column<int>(type: "integer", nullable: false),
                     BorrowedById = table.Column<int>(type: "integer", nullable: false)
@@ -94,6 +93,11 @@ namespace Persistance.Migrations
                 name: "IX_Borrowing_BorrowedById",
                 table: "Borrowing",
                 column: "BorrowedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Borrowing_Id",
+                table: "Borrowing",
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Email",

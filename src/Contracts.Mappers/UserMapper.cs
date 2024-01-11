@@ -2,8 +2,9 @@
 {
     public static class UserMapper
     {
-        public static User.User MapUser(this Domain.Entities.UserEntity user)
+        public static User.User? MapUser(this Domain.Entities.UserEntity? user)
         {
+            if (user == null) return null;
             return new User.User()
             {
                 Guid = user.Guid,

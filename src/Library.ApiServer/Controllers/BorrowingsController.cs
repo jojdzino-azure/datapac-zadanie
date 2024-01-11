@@ -19,10 +19,10 @@ namespace Library.ApiServer.Controllers
             return result;
         }
 
-        [HttpPut]
-        public async Task<ReturnBorrowingCommandResponse> ReturnBorrowing([FromBody] ReturnBorrowingCommand command, CancellationToken cancellationToken = default)
+        [HttpPut("{id}")]
+        public async Task<ReturnBorrowingCommandResponse> ReturnBorrowing([FromRoute]  int id, CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(new ReturnBorrowingCommand() { BorrowingId= id }, cancellationToken);
 
             return result;
         }

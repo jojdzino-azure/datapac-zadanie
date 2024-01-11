@@ -39,6 +39,8 @@ services:
     ports:
       - "80:80"
       - "5156:5156"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     depends_on:
       postgres.database.hangfire:
         condition: service_healthy

@@ -8,11 +8,11 @@ namespace Library.ApiServer.Emails
     public class EmailSender
     {
         private readonly IBorrowingRepository _borrowingRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IQueryUserRepository _userRepository;
         private readonly ISmtpClient _client;
         private readonly SmtpSettings _settings;
 
-        public EmailSender(IBorrowingRepository repository, IUserRepository userRepository, ISmtpClient client)
+        public EmailSender(IBorrowingRepository repository, IQueryUserRepository userRepository, ISmtpClient client)
         {
             this._borrowingRepository = repository;
             this._userRepository = userRepository;
@@ -25,7 +25,7 @@ namespace Library.ApiServer.Emails
             int page = 0, pageSize = 100;
             do
             {
-                users = await _userRepository.GetUsers(page++, pageSize);
+                users = await _userRepository.GetUsersAsync(page++, pageSize);
                 foreach (var user in users)
                 {
                     var allExpiringBorrowings = await _borrowingRepository.ExpiringBorrowinsForUser(user);

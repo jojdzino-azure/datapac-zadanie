@@ -48,6 +48,7 @@ namespace Library.ApiServer.Controllers
                 return BadRequest("Body is empty");
             }
             command.Id = id;
+            command.Book.Id= id;
             var result = await _mediator.Send(command, cancellationToken);
 
             return Ok(result);

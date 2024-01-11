@@ -23,7 +23,7 @@ namespace Persistance.Repositories
 
         public async Task<BookEntity?> DeleteBookAsync(int bookId, CancellationToken cancellationToken = default)
         {
-            BookEntity? foundBook = await _libraryContext.Books.FindAsync(bookId, cancellationToken);
+            BookEntity? foundBook = await _libraryContext.Books.FindAsync(new object[] { bookId }, cancellationToken);
             if (foundBook == null)
             {
                 return null;

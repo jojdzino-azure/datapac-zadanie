@@ -15,7 +15,7 @@ namespace Contracts.Mappers
                 BorrowedForDays = borrowing.BorrowedForDays,
                 ReturnedAt = borrowing.ReturnedAt,
                 BorrowedBy = borrowing.BorrowedBy.MapUser(),
-                Id = borrowing.Id
+                Guid = borrowing.Guid
             };
         }
     }

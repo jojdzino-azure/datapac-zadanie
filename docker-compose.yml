@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data_library:/var/lib/postgresql/data
+      - postgres_data_lib:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d library'"]
       interval: 10s
@@ -26,7 +26,7 @@ services:
     ports:
       - "8000:5432"
     volumes:
-      - postgres_data_hangfire:/var/lib/postgresql/data
+      - postgres_data_hangfirelib:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U postgres -d libraryHangfire'"]
       interval: 10s
@@ -40,7 +40,7 @@ services:
       - "80:80"
       - "5156:5156"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
     depends_on:
       postgres.database.hangfire:
         condition: service_healthy
@@ -48,5 +48,5 @@ services:
         condition: service_healthy
 
 volumes:
-  postgres_data_library:
-  postgres_data_hangfire:
+  postgres_data_lib:
+  postgres_data_hangfirelib:

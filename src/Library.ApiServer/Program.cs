@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Writers;
 using Persistance;
 using Persistance.Repositories;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace WebApplication1
 {
@@ -37,7 +39,7 @@ namespace WebApplication1
                         .LogTo(Console.WriteLine, LogLevel.Information)
                         );
             builder.Services.AddTransient<ExceptionHandlingMiddleware>();
-            
+            builder.Services.AddSwaggerGen(e=>AddSwaggerDocumentation(e));
             ConfigureOptions(builder);
             ConfigureMediatR(builder);
             ConfigureRespositories(builder);
@@ -52,11 +54,10 @@ namespace WebApplication1
             
             Console.WriteLine("Done");
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             ScheduleJobs(app);
             // Configure the HTTP request pipeline.
@@ -70,6 +71,11 @@ namespace WebApplication1
 
         }
 
+        private static void AddSwaggerDocumentation(SwaggerGenOptions o)
+        {
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        }
         private static void ConfigureMailing(WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<ISmtpClient, EmptySmtpClient>();
@@ -94,6 +100,7 @@ namespace WebApplication1
             builder.Services.AddScoped<IBookRepository, BooksRepository>();
             builder.Services.AddScoped<IQueryUserRepository, UserRepository>();
             builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
+            builder.Services.AddScoped<IQueryBorrowingRepository, BorrowingRepository>();
         }
 
         private static void ConfigureMediatR(WebApplicationBuilder builder)

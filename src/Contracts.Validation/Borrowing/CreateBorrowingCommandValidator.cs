@@ -1,12 +1,13 @@
 ﻿using Contracts.Borrowing;
 using Domain.Repositories.Book;
+using Domain.Repositories.User;
 using FluentValidation;
 
 namespace Contracts.Validation.Borrowing
 {
     public class CreateBorrowingCommandValidator : AbstractValidator<CreateBorrowingCommand>
     {
-        public CreateBorrowingCommandValidator(IQueryBookRepository bookRepository)
+        public CreateBorrowingCommandValidator(IQueryBookRepository bookRepository, IQueryUserRepository userRepository)
         {
             RuleFor(b => b.BorrowedForDays).LessThan(31)
                 .WithMessage("Maximum days for borrowing a book is 31.");
@@ -15,14 +16,12 @@ namespace Contracts.Validation.Borrowing
                 var foundBook = await bookRepository.GetBookAsync(bookId, token);
                 return foundBook != null;
             }).WithMessage(e => $"Book with id {e.BookId} does not exist.");
-            //other data validations
-        }
-    }
+            RuleFor(e => e.UserGuid).MustAsync(async (userGuid, token) =>
+            {
+                var foundUser = await userRepository.GetUserAsync(userGuid, token);
+                return foundUser != null;
+            }).WithMessage(e => $"User with guid: {e.UserGuid} does not exist.");
 
-    public class ReturnBorrowingCommandValidator : AbstractValidator<ReturnBorrowingCommand>
-    {
-        public ReturnBorrowingCommandValidator()
-        {
             //other data validations
         }
     }

@@ -25,11 +25,12 @@ namespace Handlers.Borrowing
             var user = await _userRepository.GetUserAsync(request.UserGuid);
             var borrowing = await _repo.CreateBorrowing(new Domain.Entities.BorrowingEntity()
             {
+                Guid = Guid.NewGuid(),
                 Book = book,
                 BorrowedBy = user,
                 BorrowedAt = DateTime.UtcNow,
                 BorrowedForDays = request.BorrowedForDays
-            });
+            }) ;
             return new CreateBorrowingCommandResponse { Borrowing = borrowing.MapBorrowing() };
         }
     }

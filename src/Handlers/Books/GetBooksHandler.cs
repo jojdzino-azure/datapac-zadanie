@@ -1,6 +1,7 @@
 ﻿using Common.MediatR;
 using Contracts.Book;
 using Contracts.Mappers.Book;
+using Contracts.User;
 using Domain.Repositories.Book;
 
 namespace Handlers.Books

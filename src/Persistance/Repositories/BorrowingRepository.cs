@@ -32,7 +32,9 @@ namespace Persistance.Repositories
         public async Task<BorrowingEntity?> ReturnBorrowing(int borrowingId, CancellationToken cancellationToken = default)
         {
             var borrowing = await _libraryContext.Borrowings
-                .FindAsync(new object[] { borrowingId }, cancellationToken);
+                .Include(e=>e.Book)
+                .Include(e=>e.BorrowedBy)
+                .FirstOrDefaultAsync(e=>e.Id==borrowingId, cancellationToken);
             if (borrowing == null)
             {
                 return null;
@@ -46,9 +48,17 @@ namespace Persistance.Repositories
         {
             var result = await _libraryContext.Borrowings
                 .AsNoTracking()
+                .Include(e=>e.Book)
+                .Include (e=>e.BorrowedBy)
                 .Skip(pageNumber * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
+            return result;
+        }
+
+        public async Task<BorrowingEntity> GetBorrowing(int borrowingId, CancellationToken cancellationToken = default)
+        {
+            var result = await _libraryContext.Borrowings.FindAsync(new object[] { borrowingId }, cancellationToken );
             return result;
         }
     }
